@@ -1,3 +1,6 @@
-# Overwrite parameters here
-
-# parameters: {...}
+parameters:
+  team2:
+    namespaces:
+      fancy-app:
+        labels:
+          team: team2

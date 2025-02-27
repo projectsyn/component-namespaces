@@ -2,18 +2,48 @@
 
 The parent key for all of the following parameters is `namespaces`.
 
-== `namespace`
+
+== `ignoreList`
 
 [horizontal]
-type:: string
-default:: `syn-namespaces`
+type:: array
+default:: ['default', 'kube', 'syn']
 
-The namespace in which to deploy this component.
+List of prefixes that are not allowed to be configured.
+
+
+== `namespaces`
+
+[horizontal]
+type:: object
+default:: {}
+
+Contains a list of namespaces to create.
 
 
 == Example
 
 [source,yaml]
 ----
-namespace: example-namespace
+applications:
+  - namespaces as namespaces-team1 <1>
+
+parameters:
+  syn:
+    teams:
+      team1:
+        instances:
+          - namespaces-team1 <2>
+
+  namespaces_team1:
+    namespaces:
+      plain-namespace: {}
+      with-annotations:
+        annotations:
+          team: team1
+      with-labels:
+        labels:
+          team: team1
 ----
+<1> Make sure you include the component as an instance.
+<2> Make sure you configure ownership of the instance if you are not the cluster owner.

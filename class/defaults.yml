@@ -1,5 +1,12 @@
 parameters:
   namespaces:
     =_metadata:
+      multi_instance: true
       multi_tenant: true
-    namespace: syn-namespaces
+
+    ignoreList:
+      - default
+      - kube
+      - syn
+
+    namespaces: {}
