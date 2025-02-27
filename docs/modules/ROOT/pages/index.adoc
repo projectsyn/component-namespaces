@@ -2,4 +2,9 @@
 
 namespaces is a Commodore component to manage Managed Namespaces.
 
+[TIP]
+====
+Please ensure that you instantiate the component with a name and that you configure ownership of the instance if you are not the cluster owner.
+====
+
 See the xref:references/parameters.adoc[parameters] reference for further details.

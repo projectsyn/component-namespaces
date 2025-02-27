@@ -32,7 +32,6 @@ jobs:
     strategy:
       matrix:
         instance:
-          - defaults
           - team1
           - team2
     defaults:
@@ -49,7 +48,6 @@ jobs:
     strategy:
       matrix:
         instance:
-          - defaults
           - team1
           - team2
     defaults:

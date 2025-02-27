@@ -1,3 +1,9 @@
-# Overwrite parameters here
-
-# parameters: {...}
+parameters:
+  namespaces:
+    ignoreList:
+      - cilium
+  team1:
+    namespaces:
+      my-namespace:
+        annotations:
+          team: team1
