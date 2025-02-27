@@ -1,0 +1,5 @@
+parameters:
+  namespaces:
+    =_metadata:
+      multi_tenant: true
+    namespace: syn-namespaces
