@@ -28,7 +28,7 @@ local namespace(name) = {
   kind: 'Namespace',
   metadata: {
     annotations: {
-      'argocd.argoproj.io/sync-options': 'Delete=false',
+      'argocd.argoproj.io/sync-options': 'Delete=false,Prune=false',
     },
     labels: {
       name: name,
