@@ -6,7 +6,7 @@ local instance = inv.parameters._instance;
 // Prevent creating a non-instantiated instance
 assert instance != 'namespaces' : 'component must be instantiated with a name';
 
-local app = argocd.App(instance, 'default') {
+local app = argocd.App(instance, 'default', base='namespaces') {
   spec+: {
     syncPolicy+: {
       syncOptions+: [
