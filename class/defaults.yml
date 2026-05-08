@@ -10,3 +10,13 @@ parameters:
       - syn
 
     namespaces: {}
+
+    labelSync:
+      ignoreNames: []
+      ignorePrefixes:
+        - cilium
+        - kube
+        - openshift
+        - appuio
+        - syn
+      applyOnPrefix: {}
