@@ -13,17 +13,6 @@ local espNamespace = inv.parameters.espejote.namespace;
 local mrName = '%s-label-sync' % instanceName;
 local rbacName = 'managedresource-%s-label-sync' % instanceName;
 
-// Check if there are overlapping prefixes in applyOnPrefix
-local overlappingPrefixes = std.filter(
-  function(prefix)
-    std.length(std.filter(
-      function(other) other != prefix && std.startsWith(other, prefix),
-      std.objectFields(params.labelSync.applyOnPrefix)
-    )) > 0,
-  std.objectFields(params.labelSync.applyOnPrefix)
-);
-assert std.length(overlappingPrefixes) < 1 : 'overlapping prefixes in parameters.%s.labelSync.applyOnPrefix' % instanceName;
-
 // RBAC for Espejote
 local espejoteRBAC = [
   {

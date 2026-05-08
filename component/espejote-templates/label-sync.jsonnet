@@ -19,8 +19,17 @@ local labelsFromPrefix(namespace) =
     function(prefix) std.startsWith(namespace.metadata.name, prefix),
     std.objectFields(config.applyOnPrefix)
   );
+  // If multiple prefixes define the same key, the more specific prefix wins.
+  local sortedPrefixes = std.sort(
+    prefixes,
+    function(obj) std.length(obj)
+  );
 
-  if std.length(prefixes) > 0 then prefixLabels[prefixes[0]] else {};
+  std.foldl(
+    function(acc, prefix) acc + config.applyOnPrefix[prefix],
+    sortedPrefixes,
+    {}
+  );
 
 // Reconcile the given namespace.
 local reconcileNamespace(namespace) =
