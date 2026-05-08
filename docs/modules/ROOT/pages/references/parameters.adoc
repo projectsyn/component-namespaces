@@ -72,6 +72,8 @@ labelSync:
 
 Custom set of namespace prefixes, where the listed labels will be applied.
 
+See xref:how-tos/using-label-sync.adoc[] for a detailed explanation.
+
 [IMPORTANT]
 ====
 Using this with too broad settings can have unintended sideeffects!

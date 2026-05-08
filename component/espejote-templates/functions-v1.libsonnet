@@ -1,0 +1,56 @@
+// Check if the namespace should be ignored
+local ignoreNamespace(namespace, config) =
+  if std.member(config.ignoreNames, namespace.metadata.name) then
+    true
+  else if std.length(std.filter(
+    function(prefix) std.startsWith(namespace.metadata.name, prefix),
+    config.ignorePrefixes
+  )) > 0 then
+    true
+  else false;
+
+// Get the labels from a namespace name prefix by
+// first finding the prefixes that match with the namespace name
+// then return the labels defined for that prefix.
+local labelsFromPrefix(namespace, config) =
+  local filteredPrefixes = std.filter(
+    function(prefix) std.startsWith(namespace.metadata.name, prefix),
+    std.objectFields(config.applyOnPrefix)
+  );
+  // If multiple prefixes define the same key, the more specific prefix wins.
+  local sortedPrefixes = std.sort(
+    filteredPrefixes,
+    function(obj) std.length(obj)
+  );
+  // Merge the labels from the prefixes
+  local mergedLabels = std.foldl(
+    function(acc, prefix) acc + config.applyOnPrefix[prefix],
+    sortedPrefixes,
+    {}
+  );
+
+  {
+    [key]: mergedLabels[key]
+    for key in std.objectFields(mergedLabels)
+    if mergedLabels[key] != null
+  };
+
+// Reconcile the given namespace.
+local reconcileNamespace(namespace, config) =
+  // Check if the namespace can be ignored
+  if ignoreNamespace(namespace, config) then []
+  // Apply labels if the namespace name starts with defined prefixes
+  else if labelsFromPrefix(namespace, config) != {} then [
+    namespace {
+      metadata+: {
+        labels+: labelsFromPrefix(namespace, config),
+      },
+    },
+  ]
+  else [];
+
+{
+  ignoreNamespace: ignoreNamespace,
+  labelsFromPrefix: labelsFromPrefix,
+  reconcileNamespace: reconcileNamespace,
+}

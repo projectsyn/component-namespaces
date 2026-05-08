@@ -22,7 +22,15 @@ parameters:
           team: team1
     labelSync:
       applyOnPrefix:
-        'vshn-keycloak':
-          'set.rbac.syn.tools/allow-team1': ''
-        'vshn-postgres':
-          'set.rbac.syn.tools/allow-team2': ''
+        vshn-keycloak:
+          set.rbac.syn.tools/allow-team1: ''
+        vshn-postgres:
+          set.rbac.syn.tools/allow-team2: ''
+          syn.tools/environment: test
+        vshn-postgres-test:
+          set.rbac.syn.tools/allow-team2: null
+          set.rbac.syn.tools/allow-team3: ''
+        vshn-postgres-prod:
+          syn.tools/environment: prod
+
+    _enableSecretRuleTests: true
