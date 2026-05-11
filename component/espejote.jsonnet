@@ -28,7 +28,7 @@ local espejoteRBAC = [
     },
   },
   {
-    apiVersion: 'v1',
+    apiVersion: 'rbac.authorization.k8s.io/v1',
     kind: 'ClusterRole',
     metadata: {
       labels: {
@@ -42,12 +42,6 @@ local espejoteRBAC = [
         apiGroups: [ '' ],
         resources: [ 'namespaces' ],
         verbs: [ 'get', 'list', 'watch', 'patch' ],
-      },
-      {
-        apiGroups: [ 'espejote.io' ],
-        resources: [ 'jsonnetlibraries' ],
-        resourceNames: [ mrName ],
-        verbs: [ 'get', 'list', 'watch' ],
       },
     ],
   },
@@ -77,14 +71,6 @@ local espejoteRBAC = [
 ];
 
 // Espejote resources
-local jsonnetLibrary = esp.jsonnetLibrary(mrName, espNamespace) {
-  spec: {
-    data: {
-      'functions_v1.libsonnet': importstr 'espejote-templates/functions-v1.libsonnet',
-    },
-  },
-};
-
 local managedResource = esp.managedResource(mrName, espNamespace) {
   metadata+: {
     annotations: {
@@ -111,55 +97,14 @@ local managedResource = esp.managedResource(mrName, espNamespace) {
           name: 'namespaces',
         },
       },
-      {
-        name: 'jslib',
-        watchResource: {
-          apiVersion: 'espejote.io/v1alpha1',
-          kind: 'JsonnetLibrary',
-          name: mrName,
-          namespace: espNamespace,
-        },
-      },
     ],
     serviceAccountRef: {
       name: espejoteRBAC[0].metadata.name,
     },
-    template: ('local config = %s;\n' % std.manifestJson(params.labelSync)) + ("local functions = import 'lib/%s/functions_v1.libsonnet';\n" % mrName) + (importstr 'espejote-templates/label-sync.jsonnet'),
+    template: ('local config = %s;\n' % std.manifestJson(params.labelSync))
+              + (importstr 'espejote-templates/label-sync.jsonnet'),
   },
 };
-
-// Construct tests
-local testFunctions = import 'espejote-templates/functions-v1.libsonnet';
-local testData = [
-  {
-    apiVersion: 'v1',
-    kind: 'Namespace',
-    metadata: {
-      name: 'test',
-    },
-  },
-  {
-    apiVersion: 'v1',
-    kind: 'Namespace',
-    metadata: {
-      name: 'vshn-postgres-abc',
-    },
-  },
-  {
-    apiVersion: 'v1',
-    kind: 'Namespace',
-    metadata: {
-      name: 'vshn-postgres-prod',
-    },
-  },
-  {
-    apiVersion: 'v1',
-    kind: 'Namespace',
-    metadata: {
-      name: 'vshn-postgres-test',
-    },
-  },
-];
 
 // Check if espejote is installed and resources are configured
 local hasEspejote = std.member(inv.applications, 'espejote');
@@ -169,12 +114,7 @@ local hasDynamicLabels = std.length(params.labelSync.applyOnPrefix) > 0;
 if hasDynamicLabels && hasEspejote then
   {
     '00_espejote_rbac': espejoteRBAC,
-    '00_espejote_jslib': jsonnetLibrary,
     '00_espejote_mr': managedResource,
-    [if std.get(params, '_enableSecretRuleTests', false) then '99_secret_tests']: [
-      testFunctions.reconcileNamespace(data, params.labelSync)
-      for data in testData
-    ],
   }
 else if hasDynamicLabels then
   std.trace(

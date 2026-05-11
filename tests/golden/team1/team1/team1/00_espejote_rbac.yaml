@@ -7,7 +7,7 @@ metadata:
   name: team1-label-sync
   namespace: syn-espejote
 ---
-apiVersion: v1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
@@ -24,16 +24,6 @@ rules:
       - list
       - watch
       - patch
-  - apiGroups:
-      - espejote.io
-    resourceNames:
-      - team1-label-sync
-    resources:
-      - jsonnetlibraries
-    verbs:
-      - get
-      - list
-      - watch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding

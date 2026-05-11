@@ -32,5 +32,3 @@ parameters:
           set.rbac.syn.tools/allow-team3: ''
         vshn-postgres-prod:
           syn.tools/environment: prod
-
-    _enableSecretRuleTests: true
