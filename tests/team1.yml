@@ -1,9 +1,34 @@
+applications:
+  - espejote
+
 parameters:
+  kapitan:
+    dependencies:
+      - type: https
+        source: https://raw.githubusercontent.com/projectsyn/component-espejote/master/lib/espejote.libsonnet
+        output_path: vendor/lib/espejote.libsonnet
+
+  espejote:
+    namespace: syn-espejote
+
   namespaces:
     ignoreList:
       - cilium
+
   team1:
     namespaces:
       my-namespace:
         annotations:
           team: team1
+    labelSync:
+      applyOnPrefix:
+        vshn-keycloak:
+          set.rbac.syn.tools/allow-team1: ''
+        vshn-postgres:
+          set.rbac.syn.tools/allow-team2: ''
+          syn.tools/environment: test
+        vshn-postgres-test:
+          set.rbac.syn.tools/allow-team2: null
+          set.rbac.syn.tools/allow-team3: ''
+        vshn-postgres-prod:
+          syn.tools/environment: prod

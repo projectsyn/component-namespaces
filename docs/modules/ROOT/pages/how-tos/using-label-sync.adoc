@@ -1,0 +1,120 @@
+= Using LabelSync on Namespace Prefixes
+
+Whit this component you can label namespaces based on their prefixes.
+
+== Customizing Labels and Prefixes
+
+You can define sets of labels that should be applied on namespaces that match the defined prefixes.
+
+[TIP]
+====
+All labels from all matched prefixes get applied, if a label key is defined multiple times the longest prefix has precedence.
+====
+
+[source,yaml]
+----
+labelSync:
+  applyOnPrefix:
+    vshn-postgres: <1>
+      set.rbac.syn.tools/allow-team2: '' <2>
+      syn.tools/environment: test <2>
+    vshn-postgres-test:
+      set.rbac.syn.tools/allow-team2: null <3>
+      set.rbac.syn.tools/allow-team3: ''
+    vshn-postgres-prod:
+      syn.tools/environment: prod <4>
+----
+<1> Prefix that will be matched to namespaces.
+<2> Defines the label that will be applied if the prefix matches.
+<3> Labels with a value of null will be removed, eg. if a less precise prefix match adds this label.
+<4> Overwrites the value of a label, eg. if a less precise prefix match has a different value.
+
+== Examples
+
+Using above configuration, here are a couple of examples for better understanding.
+
+=== Overwriting Labels
+
+If you have the following namespaces:
+
+[source,yaml]
+----
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: vshn-postgres-abc
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: vshn-postgres-prod-abc
+----
+
+Then the following labels will be applied:
+
+[source,yaml]
+----
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    set.rbac.syn.tools/allow-team2: ''
+    syn.tools/environment: test
+  name: vshn-postgres-abc
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    set.rbac.syn.tools/allow-team2: ''
+    syn.tools/environment: prod <1>
+  name: vshn-postgres-prod-abc
+----
+<1> This label got overwritten by the more precise prefix match.
+
+=== Removing Labels
+
+
+If you have the following namespaces:
+
+[source,yaml]
+----
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: vshn-postgres-abc
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: vshn-postgres-test-abc
+----
+
+Then the following labels will be applied:
+
+[source,yaml]
+----
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    set.rbac.syn.tools/allow-team2: ''
+    syn.tools/environment: test
+  name: vshn-postgres-abc
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    set.rbac.syn.tools/allow-team3: '' <1> <2>
+    syn.tools/environment: test
+  name: vshn-postgres-test-abc
+----
+<1> This label was added by the more precise prefix match.
+<2> The label `set.rbac.syn.tools/allow-team2` was removed by the rule:
++
+[source,yaml]
+----
+vshn-postgres-test:
+  set.rbac.syn.tools/allow-team2: null
+----

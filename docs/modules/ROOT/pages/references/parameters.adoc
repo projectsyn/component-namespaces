@@ -21,6 +21,65 @@ default:: {}
 Contains a list of namespaces to create.
 
 
+== `labelSync`
+
+Configures dynamic Roles and RoleBindings managed by Espejote.
+
+=== `labelSync.ignoredNames`
+
+[horizontal]
+type:: list of strings
+default:: empty list
+
+A list of namespace names where no labels will be applied.
+Entries in the list can be removed by adding the entry prefixed with a `~`.
+
+=== `labelSync.ignoredPrefixes`
+
+[horizontal]
+type:: list of strings
+default::
++
+[source,yaml]
+----
+labelSync:
+  ignoredPrefixes:
+    - kube
+    - openshift
+    - appuio
+    - syn
+----
+
+A list of namespace name-prefixes where no labels will be applied.
+Entries in the list can be removed by adding the entry prefixed with a `~`.
+
+=== `labelSync.applyOnPrefix`
+
+[horizontal]
+type:: dict
+default:: `{}`
+example::
++
+[source,yaml]
+----
+labelSync:
+  applyOnPrefix:
+    'vshn-postgres': <1>
+      'set.rbac.syn.tools/allow-team1': '' <2>
+----
+<1> Matches all namespaces that start with `vshn-postgres`.
+<2> Applies the label `set.rbac.syn.tools/allow-team1=''` to the matching namespace.
+
+Custom set of namespace prefixes, where the listed labels will be applied.
+
+See xref:how-tos/using-label-sync.adoc[] for a detailed explanation.
+
+[IMPORTANT]
+====
+Using this with too broad settings can have unintended sideeffects!
+====
+
+
 == Example
 
 [source,yaml]
